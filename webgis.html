@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peta Stadion Sumatera Utara</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 400px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .filters {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            background: #f8f9fa;
+        }
+
+        .filter-group {
+            margin-bottom: 15px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #495057;
+            font-size: 0.9em;
+        }
+
+        .filter-group select, 
+        .filter-group input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.9em;
+            transition: border-color 0.3s ease;
+        }
+
+        .filter-group select:focus, 
+        .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .reset-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #c82333;
+        }
+
+        .stats {
+            background: #e8f4f8;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.9em;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .stadion-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        .stadion-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+
+        .stadion-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stadion-item.active {
+            background: #f0f8ff;
+            border-left-color: #28a745;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stadion-name {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .stadion-markas {
+            color: #6c757d;
+            font-size: 0.85em;
+            margin-bottom: 8px;
+        }
+
+        .stadion-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .kapasitas-badge {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .rumput-badge {
+            background: #17a2b8;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 10px;
+            font-size: 0.7em;
+            font-weight: 500;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .control-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin: 2px;
+            transition: background-color 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: #5a67d8;
+        }
+
+        /* Custom popup styles */
+        .custom-popup {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .popup-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .popup-content {
+            line-height: 1.6;
+        }
+
+        .popup-row {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .popup-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .popup-value {
+            color: #6c757d;
+            text-align: right;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 300px;
+            }
+            
+            .stadion-list {
+                max-height: 150px;
+            }
+            
+            .map-container {
+                height: calc(100vh - 300px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="header">
+                <h1>Peta Stadion</h1>
+                <p>Sumatera Utara</p>
+            </div>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="searchName">Cari Nama Stadion</label>
+                    <input type="text" id="searchName" placeholder="Ketik nama stadion...">
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterMarkas">Filter Markas</label>
+                    <select id="filterMarkas">
+                        <option value="">Semua Markas</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterRumput">Filter Jenis Rumput</label>
+                    <select id="filterRumput">
+                        <option value="">Semua Jenis Rumput</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filterKapasitas">Filter Kapasitas</label>
+                    <select id="filterKapasitas">
+                        <option value="">Semua Kapasitas</option>
+                        <option value="small">Kecil (< 5,000)</option>
+                        <option value="medium">Sedang (5,000 - 15,000)</option>
+                        <option value="large">Besar (> 15,000)</option>
+                    </select>
+                </div>
+                
+                <button class="reset-btn" onclick="resetFilters()">Reset Filter</button>
+            </div>
+
+            <div class="stats">
+                <div id="statsInfo">
+                    Menampilkan <span id="showingCount">0</span> dari <span id="totalCount">0</span> stadion
+                </div>
+            </div>
+
+            <div class="stadion-list" id="stadionList">
+                <!-- Stadium list will be populated here -->
+            </div>
+
+            <div class="no-results" id="noResults" style="display: none;">
+                <h4>Tidak ada stadion ditemukan</h4>
+                <p>Coba ubah kriteria pencarian</p>
+            </div>
+        </div>
+
+        <div class="map-container">
+            <div class="map-controls">
+                <button class="control-btn" onclick="fitAllMarkers()">Lihat Semua</button>
+                <button class="control-btn" onclick="resetMapView()">Reset View</button>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    
+    <script>
+        // Data stadion akan diambil dari file eksternal menggunakan fetch
+        let stadionData = null;
+        let map;
+        let markersLayer;
+        let filteredData = [];
+        let activeMarker = null;
+
+        // Initialize map
+        function initMap() {
+            // Create map centered on Medan, Sumatera Utara
+            map = L.map('map').setView([3.5952, 98.6722], 9);
+
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Create markers layer group
+            markersLayer = L.layerGroup().addTo(map);
+        }
+
+        // Create custom marker icon based on capacity
+        function createMarkerIcon(capacity) {
+            let color = '#667eea';
+            let size = 'medium';
+            
+            if (capacity >= 20000) {
+                color = '#dc3545'; // Red for large stadiums
+                size = 'large';
+            } else if (capacity >= 10000) {
+                color = '#ffc107'; // Yellow for medium stadiums
+                size = 'medium';
+            } else {
+                color = '#28a745'; // Green for small stadiums
+                size = 'small';
+            }
+
+            const iconSize = size === 'large' ? [30, 30] : size === 'medium' ? [25, 25] : [20, 20];
+
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="
+                    background-color: ${color};
+                    width: ${iconSize[0]}px;
+                    height: ${iconSize[1]}px;
+                    border-radius: 50%;
+                    border: 3px solid white;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    font-weight: bold;
+                    font-size: ${size === 'large' ? '14px' : size === 'medium' ? '12px' : '10px'};
+                ">⚽</div>`,
+                iconSize: iconSize,
+                iconAnchor: [iconSize[0]/2, iconSize[1]/2]
+            });
+        }
+
+        // Create popup content
+        function createPopupContent(feature) {
+            const props = feature.properties;
+            return `
+                <div class="custom-popup">
+                    <div class="popup-title">${props.nama_Std}</div>
+                    <div class="popup-content">
+                        <div class="popup-row">
+                            <span class="popup-label">Markas:</span>
+                            <span class="popup-value">${props.markas}</span>
+                        </div>
+                        <div class="popup-row">
+                            <span class="popup-label">Kapasitas:</span>
+                            <span class="popup-value">${props.kapasitas ? props.kapasitas.toLocaleString() : 'N/A'}</span>
+                        </div>
+                        <div class="popup-row">
+                            <span class="popup-label">Jenis Rumput:</span>
+                            <span class="popup-value">${props.jns_rumput}</span>
+                        </div>
+                        <div class="popup-row">
+                            <span class="popup-label">Alamat:</span>
+                            <span class="popup-value">${props.alamat}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Add markers to map
+        function addMarkersToMap(data) {
+            markersLayer.clearLayers();
+            
+            data.forEach((feature, index) => {
+                if (feature.geometry && feature.geometry.coordinates) {
+                    const coords = feature.geometry.coordinates;
+                    const marker = L.marker([coords[1], coords[0]], {
+                        icon: createMarkerIcon(feature.properties.kapasitas || 0)
+                    });
+
+                    marker.bindPopup(createPopupContent(feature));
+                    marker.featureIndex = index;
+                    
+                    marker.on('click', function() {
+                        highlightStadionItem(index);
+                        activeMarker = marker;
+                    });
+
+                    markersLayer.addLayer(marker);
+                }
+            });
+        }
+
+        // Initialize filters
+        function populateFilterOptions() {
+            const validFeatures = stadionData.features.filter(f => 
+                f.geometry && f.geometry.coordinates && f.properties && f.properties.nama_Std
+            );
+
+            const markas = [...new Set(validFeatures.map(f => f.properties.markas))].sort();
+            const rumput = [...new Set(validFeatures.map(f => f.properties.jns_rumput))].sort();
+
+            const markasSelect = document.getElementById('filterMarkas');
+            const rumputSelect = document.getElementById('filterRumput');
+
+            markas.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m;
+                option.textContent = m;
+                markasSelect.appendChild(option);
+            });
+
+            rumput.forEach(r => {
+                const option = document.createElement('option');
+                option.value = r;
+                option.textContent = r;
+                rumputSelect.appendChild(option);
+            });
+        }
+
+        // Display stadium list
+        function displayStadionList(data) {
+            const list = document.getElementById('stadionList');
+            const noResults = document.getElementById('noResults');
+
+            if (data.length === 0) {
+                list.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+
+            list.style.display = 'block';
+            noResults.style.display = 'none';
+
+            list.innerHTML = data.map((feature, index) => {
+                const props = feature.properties;
+                return `
+                    <div class="stadion-item" onclick="focusOnStadion(${index})" data-index="${index}">
+                        <div class="stadion-name">${props.nama_Std}</div>
+                        <div class="stadion-markas">${props.markas}</div>
+                        <div class="stadion-details">
+                            <span class="rumput-badge">${props.jns_rumput}</span>
+                            ${props.kapasitas ? `<span class="kapasitas-badge">${props.kapasitas.toLocaleString()}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Focus on stadium
+        function focusOnStadion(index) {
+            const feature = filteredData[index];
+            if (feature && feature.geometry) {
+                const coords = feature.geometry.coordinates;
+                map.setView([coords[1], coords[0]], 15);
+                
+                // Find and open popup for this marker
+                markersLayer.eachLayer(marker => {
+                    if (marker.featureIndex === index) {
+                        marker.openPopup();
+                        activeMarker = marker;
+                    }
+                });
+                
+                highlightStadionItem(index);
+            }
+        }
+
+        // Highlight stadium item in list
+        function highlightStadionItem(index) {
+            document.querySelectorAll('.stadion-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const targetItem = document.querySelector(`[data-index="${index}"]`);
+            if (targetItem) {
+                targetItem.classList.add('active');
+                targetItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const searchName = document.getElementById('searchName').value.toLowerCase();
+            const filterMarkas = document.getElementById('filterMarkas').value;
+            const filterRumput = document.getElementById('filterRumput').value;
+            const filterKapasitas = document.getElementById('filterKapasitas').value;
+
+            filteredData = stadionData.features.filter(feature => {
+                if (!feature.geometry || !feature.geometry.coordinates || !feature.properties || !feature.properties.nama_Std) {
+                    return false;
+                }
+                
+                const props = feature.properties;
+                
+                if (searchName && !props.nama_Std.toLowerCase().includes(searchName)) {
+                    return false;
+                }
+                
+                if (filterMarkas && props.markas !== filterMarkas) {
+                    return false;
+                }
+                
+                if (filterRumput && props.jns_rumput !== filterRumput) {
+                    return false;
+                }
+                
+                if (filterKapasitas && props.kapasitas) {
+                    const kapasitas = props.kapasitas;
+                    if (filterKapasitas === 'small' && kapasitas >= 5000) return false;
+                    if (filterKapasitas === 'medium' && (kapasitas < 5000 || kapasitas > 15000)) return false;
+                    if (filterKapasitas === 'large' && kapasitas <= 15000) return false;
+                }
+                
+                return true;
+            });
+
+            displayStadionList(filteredData);
+            addMarkersToMap(filteredData);
+            updateStats();
+        }
+
+        // Update stats
+        function updateStats() {
+            const totalCount = stadionData.features.filter(f => 
+                f.geometry && f.geometry.coordinates && f.properties && f.properties.nama_Std
+            ).length;
+            const showingCount = filteredData.length;
+            
+            document.getElementById('totalCount').textContent = totalCount;
+            document.getElementById('showingCount').textContent = showingCount;
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchName').value = '';
+            document.getElementById('filterMarkas').value = '';
+            document.getElementById('filterRumput').value = '';
+            document.getElementById('filterKapasitas').value = '';
+            applyFilters();
+        }
+
+        // Map controls
+        function fitAllMarkers() {
+            if (filteredData.length > 0) {
+                const group = new L.featureGroup();
+                filteredData.forEach(feature => {
+                    if (feature.geometry && feature.geometry.coordinates) {
+                        const coords = feature.geometry.coordinates;
+                        group.addLayer(L.marker([coords[1], coords[0]]));
+                    }
+                });
+                map.fitBounds(group.getBounds().pad(0.05));
+            }
+        }
+
+        function resetMapView() {
+            map.setView([3.5952, 98.6722], 9);
+        }
+
+        // Event listeners
+        document.getElementById('searchName').addEventListener('input', applyFilters);
+        document.getElementById('filterMarkas').addEventListener('change', applyFilters);
+        document.getElementById('filterRumput').addEventListener('change', applyFilters);
+        document.getElementById('filterKapasitas').addEventListener('change', applyFilters);
+
+        // Initialize application
+        function init() {
+            initMap();
+            populateFilterOptions();
+            applyFilters(); // This will populate initial data
+        }
+
+        // Ambil data stadion dari file eksternal menggunakan fetch
+        fetch('data/projectstadion.geojson')
+            .then(response => response.json())
+            .then(data => {
+                stadionData = data;
+                init();
+            })
+            .catch(err => {
+                alert('Gagal memuat data stadion!');
+                console.error(err);
+            });
+    </script>
+</body>
+</html>

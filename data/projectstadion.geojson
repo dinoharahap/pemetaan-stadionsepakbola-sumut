@@ -1,0 +1,19 @@
+{
+"type": "FeatureCollection",
+"name": "projectstadion",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Teladan", "markas": "Psms Medan", "jns_rumput": "Zoysia Matrella", "alamat": "Jalan Teladan", "kapasitas": 20000 }, "geometry": { "type": "Point", "coordinates": [ 98.694925808911222, 3.564955385249358 ] } },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Unimed", "markas": "Tim Unimed", "jns_rumput": "Bahia Grass", "alamat": "Jln Williem Iskandar", "kapasitas": 2000 }, "geometry": { "type": "Point", "coordinates": [ 98.72078550109164, 3.608849406544926 ] } },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Baharuddin Siregar", "markas": "Psps Deli Serdang", "jns_rumput": "Bahia Grass", "alamat": "Jln Raya Medan-Tebing Tinggi", "kapasitas": 15000 }, "geometry": { "type": "Point", "coordinates": [ 98.864480960616035, 3.550180697111997 ] } },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Kebun Bunga", "markas": "Psms Medan", "jns_rumput": "Zoysia Matrella", "alamat": "Jalan Candi Borobudur", "kapasitas": 10000 }, "geometry": { "type": "Point", "coordinates": [ 98.670739219513052, 3.58801225073995 ] } },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Utama Sumatera Utara", "markas": "PSDS", "jns_rumput": "Zoysia Matrella", "alamat": "Jalan Sultan Serdang", "kapasitas": 25750 }, "geometry": { "type": "Point", "coordinates": [ 98.822209931723378, 3.603294414409137 ] } },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Mini Usu", "markas": "Tim Usu", "jns_rumput": "Alami", "alamat": "Jalan Tri Dharma", "kapasitas": null }, "geometry": null },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Mini Usu", "markas": "Tim Usu", "jns_rumput": "Bahia Grass", "alamat": "Jalan Tri Dharma", "kapasitas": 2000 }, "geometry": { "type": "Point", "coordinates": [ 98.654416914120475, 3.566094521593055 ] } },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Mini Usu", "markas": "Tim Usu", "jns_rumput": "Alami", "alamat": "Jalan Tri Dharma", "kapasitas": null }, "geometry": null },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Mutiara", "markas": "PS Bintang Asahan", "jns_rumput": "Bahia Grass", "alamat": "Jalan Sisingamangaraja", "kapasitas": 10000 }, "geometry": { "type": "Point", "coordinates": [ 99.640162479634043, 2.980853873190145 ] } },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Binaraga", "markas": "Poslab Labuhanbatu", "jns_rumput": "Bahia Grass", "alamat": "Jalan Binaraga", "kapasitas": 2000 }, "geometry": { "type": "Point", "coordinates": [ 99.819397472111348, 2.096952485001131 ] } },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion Mini Tarutung", "markas": "Tim Sepakbola Tarutung", "jns_rumput": "Bahia Grass", "alamat": "Jalan Raja Saul Lumbantobing", "kapasitas": 5000 }, "geometry": { "type": "Point", "coordinates": [ 98.965987914043538, 2.023368637602238 ] } },
+{ "type": "Feature", "properties": { "id": null, "nama_Std": "Stadion TD Pardede", "markas": "Tim Sepakbola Medan", "jns_rumput": "Zoysia Matrella", "alamat": "Jalan Binjai No.Km. 10,8", "kapasitas": 20000 }, "geometry": { "type": "Point", "coordinates": [ 98.593942442284018, 3.606464774518034 ] } }
+]
+}
